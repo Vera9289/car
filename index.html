@@ -11,7 +11,7 @@
     <title>車務日誌</title>
     <style>
         :root { --main: #A2D2FF; --bg: #F8FBFF; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: env(safe-area-inset-top) 20px calc(80px + env(safe-area-inset-bottom)); -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: env(safe-area-inset-top) 20px calc(100px + env(safe-area-inset-bottom)); -webkit-tap-highlight-color: transparent; }
         .container { width: 100%; max-width: 500px; margin: auto; }
         .card { background: linear-gradient(135deg, #A2D2FF, #BDE0FE); color: white; padding: 30px 20px; border-radius: 30px; text-align: center; box-shadow: 0 10px 20px rgba(162, 210, 255, 0.4); margin-bottom: 25px; }
         .card h2 { margin: 10px 0; font-size: 38px; font-weight: bold; }
@@ -20,34 +20,38 @@
         .item { background: white; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
         .info b { display: block; font-size: 16px; color: #444; }
         .info small { color: #AAA; font-size: 12px; }
-        .price { font-size: 18px; font-weight: bold; color: #7DB9E8; }
+        .price { font-size: 18px; font-weight: bold; color: #7DB9E8; display: flex; align-items: center; }
         
-        /* 修正：把 ＋ 圈圈位置強制置中且設為正圓形 */
+        /* 🚀 修正：絕對正圓形的 ＋ 按鈕 */
         .add-btn { 
             position: fixed; 
-            bottom: calc(30px + env(safe-area-inset-bottom)); /* 考慮安全區域 */
+            bottom: calc(40px + env(safe-area-inset-bottom));
             right: 30px; 
-            width: 70px; /* 寬 */
-            height: 70px; /* 高相等，強制圓形 */
+            width: 70px !important;
+            height: 70px !important;
+            aspect-ratio: 1 / 1; /* 強制寬高 1:1 */
             background: #A2D2FF; 
             color: white; 
-            border-radius: 50%; /* 正圓 */
+            border-radius: 1000px; /* 這裡改用大數值確保超圓 */
             border: none; 
-            font-size: 45px; 
-            font-weight: 300; /* 讓 ＋ 號秀氣一點 */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
+            font-size: 40px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15); 
             z-index: 999; 
-            display: flex; align-items: center; justify-content: center; /* ＋ 號置中 */
-            line-height: 1;
-            padding-bottom: 5px; /* 視覺微調 ＋ 號高度 */
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0;
+            margin: 0;
+            line-height: 0;
         }
         
         #pop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .box { background: white; padding: 25px; border-radius: 25px; width: 80%; max-width: 300px; }
-        .box h3 { margin: 0 0 15px; text-align: center; color: #5B99C2; font-size: 18px; }
+        .box h3 { margin: 0 0 15px; text-align: center; color: #5B99C2; }
         input, select { width: 100%; padding: 12px; margin: 8px 0; border-radius: 12px; border: 1px solid #EEE; box-sizing: border-box; font-size: 16px; -webkit-appearance: none; }
         .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-        .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; }
+        .del-icon { margin-left: 12px; cursor: pointer; font-size: 18px; opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -55,7 +59,7 @@
 <div class="container">
     <h2 style="color: #5B99C2; text-align: center; font-size: 20px;">車務日誌 ☁️</h2>
     <div class="card">
-        <p id="label" style="font-size: 14px; opacity: 0.9; margin: 0;">2026年支出</p>
+        <p id="label" style="font-size: 14px; opacity: 0.9; margin: 0;">載入中</p>
         <h2 id="total">$ 0</h2>
     </div>
 
@@ -72,7 +76,7 @@
     <div id="list"></div>
 </div>
 
-<button class="add-btn" onclick="document.getElementById('pop').style.display='flex'">+</button>
+<button class="add-btn" onclick="document.getElementById('pop').style.display='flex'"><span>+</span></button>
 
 <div id="pop">
     <div class="box">
@@ -81,9 +85,10 @@
         <select id="in-t" onchange="toggleNameInput()">
             <option value="油費">油費 ⛽</option>
             <option value="保養">保養 🛠️</option>
+            <option value="車檢">車檢 🔍</option>
             <option value="其他">✨ 其他</option>
         </select>
-        <input type="text" id="in-n" placeholder="項目名稱 (如：更換機油)" style="display:none">
+        <input type="text" id="in-n" placeholder="項目名稱" style="display:none">
         <input type="number" id="in-p" placeholder="金額" inputmode="decimal">
         <div class="btn-group">
             <button class="btn" style="background:#EEE; color:#555" onclick="document.getElementById('pop').style.display='none'">取消</button>
@@ -93,7 +98,7 @@
 </div>
 
 <script>
-    var db = JSON.parse(localStorage.getItem('car_db_v3')) || []; // 使用新的數據資料庫，避免衝突
+    var db = JSON.parse(localStorage.getItem('car_db_v4')) || []; 
     var today = new Date();
 
     (function init() {
@@ -104,14 +109,13 @@
         ys.value = today.getFullYear();
         document.getElementById('m').value = String(today.getMonth() + 1).padStart(2, '0');
         document.getElementById('in-d').valueAsDate = today;
-        toggleNameInput(); // 初始化時檢查類別
+        toggleNameInput();
         show();
     })();
 
-    // 依舊是油費不填名稱，其他的要填
     function toggleNameInput() {
         const type = document.getElementById('in-t').value;
-        const nameInput = document.getElementById('in-name');
+        const nameInput = document.getElementById('in-n');
         nameInput.style.display = (type === '油費') ? 'none' : 'block';
         if (type === '油費') nameInput.value = '';
     }
@@ -124,12 +128,12 @@
         db.push({
             id: Date.now(),
             t: document.getElementById('in-t').value,
-            n: document.getElementById('in-n').value || document.getElementById('in-t').value, // 沒填就用類別當名稱
+            n: document.getElementById('in-n').value || document.getElementById('in-t').value,
             p: p,
             d: d,
             s: (dt.getMonth()+1) + "/" + dt.getDate()
         });
-        localStorage.setItem('car_db_v3', JSON.stringify(db));
+        localStorage.setItem('car_db_v4', JSON.stringify(db));
         document.getElementById('pop').style.display = 'none';
         document.getElementById('in-p').value = '';
         show();
@@ -146,8 +150,7 @@
             var id = new Date(i.d);
             if(String(id.getFullYear()) == sy && (sm == 'all' || String(id.getMonth()+1).padStart(2, '0') == sm)) {
                 sum += parseFloat(i.p);
-                // 修正：補回垃圾桶圖示，並提高透明度
-                l.innerHTML += '<div class="item"><div class="info"><b>'+i.n+'</b><small>'+i.s+'</small></div><div class="price">$'+parseFloat(i.p).toLocaleString()+' <span onclick="del('+i.id+')" style="margin-left:10px; cursor:pointer; opacity:0.8">🗑️</span></div></div>';
+                l.innerHTML += '<div class="item"><div class="info"><b>'+i.n+'</b><small>'+i.s+'</small></div><div class="price">$'+parseFloat(i.p).toLocaleString()+' <span class="del-icon" onclick="del('+i.id+')">🗑️</span></div></div>';
             }
         });
         document.getElementById('total').innerText = '$ ' + sum.toLocaleString();
@@ -155,10 +158,9 @@
     }
 
     function del(id) {
-        // 在 App 模式下，confirm 按鈕會直接跳出來，妳直接點確認即可
         if(confirm("確定刪除嗎？")) {
             db = db.filter(function(x){ return x.id !== id; });
-            localStorage.setItem('car_db_v3', JSON.stringify(db));
+            localStorage.setItem('car_db_v4', JSON.stringify(db));
             show();
         }
     }

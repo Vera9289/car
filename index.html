@@ -2,55 +2,46 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="車務日誌">
     
-    <title>車務日誌 🚗</title>
+    <title>車務日誌</title>
     <style>
-        :root { --baby-blue: #A2D2FF; --light-blue: #E7F2FF; --bg: #F8FBFF; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 20px 20px 100px; -webkit-tap-highlight-color: transparent; }
+        :root { --main: #A2D2FF; --bg: #F8FBFF; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: env(safe-area-inset-top) 20px 100px; -webkit-tap-highlight-color: transparent; }
         .container { width: 100%; max-width: 500px; margin: auto; }
-        .total-card {
-            background: linear-gradient(135deg, var(--baby-blue), #BDE0FE);
-            color: white; padding: 25px; border-radius: 30px;
-            text-align: center; box-shadow: 0 8px 20px rgba(162, 210, 255, 0.4); margin-bottom: 20px;
-        }
-        .total-card h2 { margin: 10px 0; font-size: 36px; }
-        .filter-section { display: flex; gap: 10px; margin-bottom: 20px; }
-        .filter-select { flex: 1; padding: 12px; border-radius: 15px; border: 1.5px solid var(--baby-blue); background: white; color: #5B99C2; font-size: 15px; font-weight: bold; outline: none; }
-        .item-card { background: white; border-radius: 20px; padding: 18px; margin-bottom: 15px; display: flex; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .info { flex-grow: 1; }
-        .tag { font-size: 11px; color: #5B99C2; background: var(--light-blue); padding: 3px 10px; border-radius: 20px; font-weight: bold; }
-        .title { display: block; font-size: 16px; font-weight: bold; margin-top: 4px; }
-        .date { font-size: 12px; color: #AAA; }
-        .price { font-size: 18px; font-weight: bold; color: #7DB9E8; margin-right: 10px; }
-        .del { color: #FFB3B3; font-size: 18px; cursor: pointer; border: none; background: none; padding: 5px; }
-        .add-btn { position: fixed; bottom: 35px; right: 30px; width: 65px; height: 65px; background: var(--baby-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 6px 15px rgba(162, 210, 255, 0.5); border: none; z-index: 999; cursor: pointer; }
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background: white; padding: 25px; border-radius: 25px; width: 85%; max-width: 320px; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #EEE; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
-        .btns { display: flex; gap: 10px; margin-top: 15px; }
-        .b-ok { background: var(--baby-blue); color: white; border: none; padding: 12px; flex: 1; border-radius: 12px; font-weight: bold; }
-        .b-no { background: #EEE; color: #999; border: none; padding: 12px; flex: 1; border-radius: 12px; }
+        .card { background: linear-gradient(135deg, #A2D2FF, #BDE0FE); color: white; padding: 30px 20px; border-radius: 30px; text-align: center; box-shadow: 0 10px 20px rgba(162, 210, 255, 0.4); margin-bottom: 25px; }
+        .card h2 { margin: 10px 0; font-size: 38px; font-weight: bold; }
+        .filters { display: flex; gap: 10px; margin-bottom: 20px; }
+        .sel { flex: 1; padding: 12px; border-radius: 15px; border: 1.5px solid #A2D2FF; background: white; color: #5B99C2; font-size: 15px; font-weight: bold; }
+        .item { background: white; border-radius: 20px; padding: 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .info b { display: block; font-size: 16px; color: #444; }
+        .info small { color: #AAA; font-size: 12px; }
+        .price { font-size: 18px; font-weight: bold; color: #7DB9E8; }
+        .add-btn { position: fixed; bottom: 40px; right: 30px; width: 65px; height: 65px; background: #A2D2FF; color: white; border-radius: 50%; border: none; font-size: 35px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); z-index: 999; }
+        #pop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .box { background: white; padding: 25px; border-radius: 25px; width: 80%; max-width: 300px; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #EEE; border-radius: 12px; box-sizing: border-box; font-size: 16px; -webkit-appearance: none; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="color: #5B99C2; text-align: center;">車務消費日誌 ☁️</h2>
-    <div class="total-card">
-        <p id="t-label">支出小計</p>
-        <h2 id="t-display">$ 0</h2>
-        <p id="t-count" style="font-size:12px; opacity:0.8">載入中...</p>
+    <h2 style="color: #5B99C2; text-align: center;">車務日誌 ☁️</h2>
+    <div class="card">
+        <p id="label">支出小計</p>
+        <h2 id="total">$ 0</h2>
     </div>
 
-    <div class="filter-section">
-        <select id="f-year" class="filter-select" onchange="updateUI()"></select>
-        <select id="f-month" class="filter-select" onchange="updateUI()">
-            <option value="all">整年紀錄</option>
+    <div class="filters">
+        <select id="y" class="sel" onchange="show()"></select>
+        <select id="m" class="sel" onchange="show()">
+            <option value="all">整年</option>
             <option value="01">1月</option><option value="02">2月</option><option value="03">3月</option>
             <option value="04">4月</option><option value="05">5月</option><option value="06">6月</option>
             <option value="07">7月</option><option value="08">8月</option><option value="09">9月</option>
@@ -60,87 +51,82 @@
     <div id="list"></div>
 </div>
 
-<button class="add-btn" onclick="document.getElementById('modal').style.display='flex'">+</button>
+<button class="add-btn" onclick="document.getElementById('pop').style.display='flex'">+</button>
 
-<div id="modal">
-    <div class="modal-box">
-        <h3 style="margin-top:0; color:#5B99C2; text-align:center">新增紀錄</h3>
-        <input type="date" id="i-date">
-        <select id="i-type" onchange="document.getElementById('i-name').style.display=(this.value=='油費'?'none':'block')">
+<div id="pop">
+    <div class="box">
+        <h3 style="margin:0 0 10px; text-align:center; color:#5B99C2">新增項目</h3>
+        <input type="date" id="in-d">
+        <select id="in-t" onchange="document.getElementById('in-n').style.display=(this.value=='油費'?'none':'block')">
             <option value="油費">油費 ⛽</option>
             <option value="保養">保養 🛠️</option>
-            <option value="車檢">車檢 🔍</option>
-            <option value="其他">其他 ✨</option>
+            <option value="其他">✨ 其他</option>
         </select>
-        <input type="text" id="i-name" placeholder="項目名稱" style="display:none">
-        <input type="number" id="i-price" placeholder="輸入金額" inputmode="decimal">
-        <div class="btns">
-            <button class="b-no" onclick="document.getElementById('modal').style.display='none'">取消</button>
-            <button class="b-ok" onclick="save()">儲存</button>
+        <input type="text" id="in-n" placeholder="項目名稱" style="display:none">
+        <input type="number" id="in-p" placeholder="金額" inputmode="decimal">
+        <div class="btn-group">
+            <button class="btn" style="background:#EEE" onclick="document.getElementById('pop').style.display='none'">取消</button>
+            <button class="btn" style="background:#A2D2FF; color:white" onclick="add()">儲存</button>
         </div>
     </div>
 </div>
 
 <script>
-    var expenses = JSON.parse(localStorage.getItem('carExpenses')) || [];
-    var now = new Date();
+    var db = JSON.parse(localStorage.getItem('car_db')) || [];
+    var today = new Date();
 
     (function init() {
-        var yS = document.getElementById('f-year');
-        for (var y = 2026; y <= now.getFullYear() + 3; y++) {
-            var opt = document.createElement('option');
-            opt.value = y; opt.text = y + " 年";
-            yS.appendChild(opt);
+        var ys = document.getElementById('y');
+        for (var i = 2026; i <= today.getFullYear() + 2; i++) {
+            var o = document.createElement('option'); o.value = i; o.text = i + "年"; ys.appendChild(o);
         }
-        yS.value = now.getFullYear();
-        document.getElementById('i-date').valueAsDate = now;
-        document.getElementById('f-month').value = String(now.getMonth() + 1).padStart(2, '0');
-        updateUI();
+        ys.value = today.getFullYear();
+        document.getElementById('m').value = String(today.getMonth() + 1).padStart(2, '0');
+        document.getElementById('in-d').valueAsDate = today;
+        show();
     })();
 
-    function save() {
-        var dVal = document.getElementById('i-date').value;
-        var type = document.getElementById('i-type').value;
-        var price = document.getElementById('i-price').value;
-        if(!dVal || !price) return;
-        var d = new Date(dVal);
-        expenses.push({
-            id: Date.now().toString(),
-            type: type,
-            name: document.getElementById('i-name').value || type,
-            price: price,
-            date: (d.getMonth() + 1) + "月" + d.getDate() + "日",
-            fullDate: dVal
+    function add() {
+        var d = document.getElementById('in-d').value;
+        var p = document.getElementById('in-p').value;
+        if(!d || !p) return;
+        var dt = new Date(d);
+        db.push({
+            id: Date.now(),
+            t: document.getElementById('in-t').value,
+            n: document.getElementById('in-n').value || document.getElementById('in-t').value,
+            p: p,
+            d: d,
+            s: (dt.getMonth()+1) + "/" + dt.getDate()
         });
-        document.getElementById('modal').style.display = 'none';
-        document.getElementById('i-price').value = '';
-        updateUI();
+        localStorage.setItem('car_db', JSON.stringify(db));
+        document.getElementById('pop').style.display = 'none';
+        document.getElementById('in-p').value = '';
+        show();
     }
 
-    function updateUI() {
-        var list = document.getElementById('list');
-        var selY = document.getElementById('f-year').value;
-        var selM = document.getElementById('f-month').value;
-        var total = 0, count = 0;
-        expenses.sort(function(a, b){ return new Date(b.fullDate) - new Date(a.fullDate); });
-        list.innerHTML = '';
-        expenses.forEach(function(item) {
-            var iD = new Date(item.fullDate);
-            if (String(iD.getFullYear()) === selY && (selM === 'all' || String(iD.getMonth() + 1).padStart(2, '0') === selM)) {
-                total += parseFloat(item.price); count++;
-                var icon = item.type === '油費' ? '⛽' : (item.type === '保養' ? '🛠️' : (item.type === '車檢' ? '🔍' : '✨'));
-                list.innerHTML += '<div class="item-card"><div class="info"><span class="tag">'+item.type+'</span><span class="title">'+item.name+'</span><span class="date">'+item.date+'</span></div><div class="price">$'+parseFloat(item.price).toLocaleString()+'</div><button class="del" onclick="del(\''+item.id+'\')">🗑️</button></div>';
+    function show() {
+        var l = document.getElementById('list');
+        var sy = document.getElementById('y').value;
+        var sm = document.getElementById('m').value;
+        var sum = 0;
+        db.sort(function(a,b){ return new Date(b.d) - new Date(a.d); });
+        l.innerHTML = '';
+        db.forEach(function(i) {
+            var id = new Date(i.d);
+            if(String(id.getFullYear()) == sy && (sm == 'all' || String(id.getMonth()+1).padStart(2, '0') == sm)) {
+                sum += parseFloat(i.p);
+                l.innerHTML += '<div class="item"><div class="info"><b>'+i.n+'</b><small>'+i.s+'</small></div><div class="price">$'+parseFloat(i.p).toLocaleString()+' <span onclick="del('+i.id+')" style="margin-left:10px; opacity:0.3">✕</span></div></div>';
             }
         });
-        document.getElementById('t-display').innerText = '$ ' + total.toLocaleString();
-        document.getElementById('t-count').innerText = '目前有 ' + count + ' 筆紀錄';
-        document.getElementById('t-label').innerText = selM === 'all' ? selY + '年度總計' : selM + '月支出小計';
-        localStorage.setItem('carExpenses', JSON.stringify(expenses));
+        document.getElementById('total').innerText = '$ ' + sum.toLocaleString();
+        document.getElementById('label').innerText = (sm == 'all' ? sy + '年' : sm + '月') + '支出';
     }
 
-    function del(id) { 
-        expenses = expenses.filter(function(i){ return i.id !== id; }); 
-        updateUI(); 
+    function del(id) {
+        db = db.filter(function(x){ return x.id !== id; });
+        localStorage.setItem('car_db', JSON.stringify(db));
+        show();
     }
 </script>
 </body>

@@ -22,22 +22,22 @@
         .info small { color: #AAA; font-size: 12px; }
         .price { font-size: 18px; font-weight: bold; color: #7DB9E8; }
         
-        /* 修正：把 ＋ 圈圈往上移，躲開底部黑條，並強制圓形置中 */
+        /* 修正：把 ＋ 圈圈位置強制置中且設為正圓形 */
         .add-btn { 
             position: fixed; 
             bottom: calc(30px + env(safe-area-inset-bottom)); /* 考慮安全區域 */
             right: 30px; 
-            width: 70px; /* 稍微放大一點 */
-            height: 70px; 
+            width: 70px; /* 寬 */
+            height: 70px; /* 高相等，強制圓形 */
             background: #A2D2FF; 
             color: white; 
-            border-radius: 50%; /* 強制正圓 */
+            border-radius: 50%; /* 正圓 */
             border: none; 
             font-size: 45px; 
             font-weight: 300; /* 讓 ＋ 號秀氣一點 */
             box-shadow: 0 8px 20px rgba(0,0,0,0.2); 
             z-index: 999; 
-            display: flex; align-items: center; justify-content: center; /* ＋ 號徹底置中 */
+            display: flex; align-items: center; justify-content: center; /* ＋ 號置中 */
             line-height: 1;
             padding-bottom: 5px; /* 視覺微調 ＋ 號高度 */
         }
@@ -55,7 +55,7 @@
 <div class="container">
     <h2 style="color: #5B99C2; text-align: center; font-size: 20px;">車務日誌 ☁️</h2>
     <div class="card">
-        <p id="label" style="font-size: 14px; opacity: 0.9; margin: 0;">04月支出</p>
+        <p id="label" style="font-size: 14px; opacity: 0.9; margin: 0;">2026年支出</p>
         <h2 id="total">$ 0</h2>
     </div>
 
@@ -81,7 +81,7 @@
         <select id="in-t" onchange="toggleNameInput()">
             <option value="油費">油費 ⛽</option>
             <option value="保養">保養 🛠️</option>
-            <option value="車檢">車檢 🔍</option> <option value="其他">✨ 其他</option>
+            <option value="其他">✨ 其他</option>
         </select>
         <input type="text" id="in-n" placeholder="項目名稱 (如：更換機油)" style="display:none">
         <input type="number" id="in-p" placeholder="金額" inputmode="decimal">
@@ -93,7 +93,7 @@
 </div>
 
 <script>
-    var db = JSON.parse(localStorage.getItem('car_db_v2')) || []; // 使用新的數據資料庫，避免衝突
+    var db = JSON.parse(localStorage.getItem('car_db_v3')) || []; // 使用新的數據資料庫，避免衝突
     var today = new Date();
 
     (function init() {
@@ -111,7 +111,7 @@
     // 依舊是油費不填名稱，其他的要填
     function toggleNameInput() {
         const type = document.getElementById('in-t').value;
-        const nameInput = document.getElementById('in-n');
+        const nameInput = document.getElementById('in-name');
         nameInput.style.display = (type === '油費') ? 'none' : 'block';
         if (type === '油費') nameInput.value = '';
     }
@@ -129,7 +129,7 @@
             d: d,
             s: (dt.getMonth()+1) + "/" + dt.getDate()
         });
-        localStorage.setItem('car_db_v2', JSON.stringify(db));
+        localStorage.setItem('car_db_v3', JSON.stringify(db));
         document.getElementById('pop').style.display = 'none';
         document.getElementById('in-p').value = '';
         show();
@@ -146,12 +146,8 @@
             var id = new Date(i.d);
             if(String(id.getFullYear()) == sy && (sm == 'all' || String(id.getMonth()+1).padStart(2, '0') == sm)) {
                 sum += parseFloat(i.p);
-                let icon = '✨';
-                if(i.t === '油費') icon = '⛽';
-                if(i.t === '保養') icon = '🛠️';
-                if(i.t === '車檢') icon = '🔍'; // 加回車檢圖示
-
-                l.innerHTML += '<div class="item"><div class="info"><b>'+i.n+'</b><small>'+i.s+'</small></div><div class="price">$'+parseFloat(i.p).toLocaleString()+' <span onclick="del('+i.id+')" style="margin-left:10px; opacity:0.3">✕</span></div></div>';
+                // 修正：補回垃圾桶圖示，並提高透明度
+                l.innerHTML += '<div class="item"><div class="info"><b>'+i.n+'</b><small>'+i.s+'</small></div><div class="price">$'+parseFloat(i.p).toLocaleString()+' <span onclick="del('+i.id+')" style="margin-left:10px; cursor:pointer; opacity:0.8">🗑️</span></div></div>';
             }
         });
         document.getElementById('total').innerText = '$ ' + sum.toLocaleString();
@@ -159,9 +155,10 @@
     }
 
     function del(id) {
-        if(confirm("確定刪除嗎？")) { // 在 App 模式下，confirm 應可運作
+        // 在 App 模式下，confirm 按鈕會直接跳出來，妳直接點確認即可
+        if(confirm("確定刪除嗎？")) {
             db = db.filter(function(x){ return x.id !== id; });
-            localStorage.setItem('car_db_v2', JSON.stringify(db));
+            localStorage.setItem('car_db_v3', JSON.stringify(db));
             show();
         }
     }

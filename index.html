@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="車務日誌">
+    
     <title>車務日誌 🚗</title>
     <style>
         :root { --baby-blue: #A2D2FF; --light-blue: #E7F2FF; --bg: #F8FBFF; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 20px 20px 100px; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 20px 20px 100px; -webkit-tap-highlight-color: transparent; }
         .container { width: 100%; max-width: 500px; margin: auto; }
         .total-card {
             background: linear-gradient(135deg, var(--baby-blue), #BDE0FE);
@@ -22,8 +27,8 @@
         .title { display: block; font-size: 16px; font-weight: bold; margin-top: 4px; }
         .date { font-size: 12px; color: #AAA; }
         .price { font-size: 18px; font-weight: bold; color: #7DB9E8; margin-right: 10px; }
-        .del { color: #FFB3B3; font-size: 18px; cursor: pointer; border: none; background: none; }
-        .add-btn { position: fixed; bottom: 35px; right: 30px; width: 65px; height: 65px; background: var(--baby-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 6px 15px rgba(162, 210, 255, 0.5); border: none; z-index: 999; }
+        .del { color: #FFB3B3; font-size: 18px; cursor: pointer; border: none; background: none; padding: 5px; }
+        .add-btn { position: fixed; bottom: 35px; right: 30px; width: 65px; height: 65px; background: var(--baby-blue); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; box-shadow: 0 6px 15px rgba(162, 210, 255, 0.5); border: none; z-index: 999; cursor: pointer; }
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); justify-content: center; align-items: center; z-index: 1000; }
         .modal-box { background: white; padding: 25px; border-radius: 25px; width: 85%; max-width: 320px; }
         input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #EEE; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
@@ -97,10 +102,7 @@
         var dVal = document.getElementById('i-date').value;
         var type = document.getElementById('i-type').value;
         var price = document.getElementById('i-price').value;
-
-        // 如果沒填日期或金額，就什麼都不做，不跳彈窗(避免卡死)
         if(!dVal || !price) return;
-
         var d = new Date(dVal);
         expenses.push({
             id: Date.now().toString(),
@@ -120,10 +122,8 @@
         var selY = document.getElementById('f-year').value;
         var selM = document.getElementById('f-month').value;
         var total = 0, count = 0;
-
         expenses.sort(function(a, b){ return new Date(b.fullDate) - new Date(a.fullDate); });
         list.innerHTML = '';
-
         expenses.forEach(function(item) {
             var iD = new Date(item.fullDate);
             if (String(iD.getFullYear()) === selY && (selM === 'all' || String(iD.getMonth() + 1).padStart(2, '0') === selM)) {
@@ -138,10 +138,9 @@
         localStorage.setItem('carExpenses', JSON.stringify(expenses));
     }
 
-    function del(id) {
-        // 同理，刪除時也不用跳確認窗，避免卡死
-        expenses = expenses.filter(function(i){ return i.id !== id; });
-        updateUI();
+    function del(id) { 
+        expenses = expenses.filter(function(i){ return i.id !== id; }); 
+        updateUI(); 
     }
 </script>
 </body>

@@ -123,12 +123,29 @@
         .delete-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 0; opacity: 0.5; }
 
         /* 懸浮按鈕 */
-        .floating-add-btn {
-            position: fixed; right: 25px; bottom: 25px; width: 70px; height: 70px;
-            background-color: var(--primary-blue); color: white; border: none;
-            border-radius: 50%; font-size: 36px; font-weight: bold;
-            box-shadow: 0 8px 20px rgba(93, 156, 236, 0.4); cursor: pointer; z-index: 99;
-        }
+.floating-add-btn {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    width: 70px;
+    height: 70px;
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 36px;
+    /* --- 核心修正：改用以下三行來確保絕對居中 --- */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1; /* 移除可能的行高干擾 */
+    /* -------------------------------------- */
+    box-shadow: 0 8px 20px rgba(93, 156, 236, 0.4);
+    cursor: pointer;
+    z-index: 99;
+    /* 解決部分手機瀏覽器點擊時的藍色外框 */
+    -webkit-tap-highlight-color: transparent;
+}
 
         /* 彈窗 */
         .modal-overlay {
